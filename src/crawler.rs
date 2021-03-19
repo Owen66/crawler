@@ -2,10 +2,11 @@ use select::document::Document;
 use select::predicate::Name;
 use std::collections::HashSet;
 use crate::handlers::Domain;
-use crate::{DBPool, db};
+use crate::db;
 use crate::data::CrawlResult;
+use deadpool_postgres::Pool;
 
-pub async fn crawl(domain: Domain, pool: PgPool) {
+pub async fn crawl(domain: Domain, pool: Pool) {
     let res = reqwest::get(&domain.name).await.unwrap().text().await.unwrap();
 
     let found_urls = Document::from(res.as_str())

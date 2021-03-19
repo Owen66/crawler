@@ -7,15 +7,23 @@ mod error;
 
 use crate::routes::{crawl_route, count_route, list_route};
 use warp::Filter;
-use sqlx::postgres::PgPoolOptions;
-
+use deadpool_postgres::{Config, ManagerConfig, RecyclingMethod};
+use deadpool_postgres::tokio_postgres::NoTls;
 
 #[tokio::main]
 async fn main() {
 
-    let pool = PgPoolOptions::new()
-        .max_connections(5)
-        .connect("postgres://postgres:password@localhost/test").await?;
+    let mut cfg = Config::new();
+    cfg.host = Some("127.0.0.1".to_string());
+    cfg.port = Some(7878);
+    cfg.user = Some("postgres".to_string());
+    cfg.dbname = Some("postgres".to_string());
+    cfg.manager = Some(ManagerConfig { recycling_method: RecyclingMethod::Fast });
+    let pool = cfg.create_pool(NoTls).unwrap();
+
+    db::init_db(&pool)
+        .await
+        .expect("database can be initialized");
 
     let routes = crawl_route(pool.clone())
         .or(count_route(pool.clone()))

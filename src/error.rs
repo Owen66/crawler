@@ -1,13 +1,13 @@
-use mobc_postgres::tokio_postgres;
 use serde_derive::Serialize;
 use std::convert::Infallible;
 use thiserror::Error;
 use warp::{http::StatusCode, Rejection, Reply};
+use deadpool_postgres::tokio_postgres;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("error getting connection from DB pool: {0}")]
-    DBPoolError(mobc::Error<tokio_postgres::Error>),
+    //#[error("error getting connection from DB pool: {0}")]
+    //DBPoolError(mobc::Error<tokio_postgres::Error>),
     #[error("error executing DB query: {0}")]
     DBQueryError(#[from] tokio_postgres::Error),
     #[error("error creating table: {0}")]
