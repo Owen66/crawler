@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS results
+(
+    id SERIAL PRIMARY KEY NOT NULL,
+    domain_name VARCHAR(255),
+    url VARCHAR(255)
+);
