@@ -4,7 +4,7 @@ To get started with this crawler. Run ```docker-compose up``` from the root of t
 
 This crawler supports 3 api.
 
-##Crawl
+## Crawl
 This will return imediatly with an accepted resonse and then crawl the given domain asyncronously. It will only crawl and index links that contain the given domain. Limiting crawling to links for the given domain keeps the crawling focused on a single domain.
 
 Returns 400 if domain url provided is invalid.
@@ -14,7 +14,7 @@ Example curl:
 curl localhost:8080/crawl -H "content-type:application/json" -d '{"name":"http://www.theregister.com"}'
 ```
 
-##Count
+## Count
 This will return a count of the links that have been indexed so far for the given domain.
 
 Returns 400 if domain url provided is invalid.
@@ -24,7 +24,7 @@ Example curl:
 curl localhost:8080/count -H "content-type:application/json" -d '{"name":"http://www.theregister.com"}'
 ```
 
-##List
+## List
 This will return a list of links that have been indexed so far for the given url.
 
 Returns 400 if domain url provided is invalid.
