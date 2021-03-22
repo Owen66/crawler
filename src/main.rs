@@ -14,16 +14,13 @@ use deadpool_postgres::tokio_postgres::NoTls;
 async fn main() {
 
     let mut cfg = Config::new();
-    cfg.host = Some("127.0.0.1".to_string());
-    cfg.port = Some(7878);
-    cfg.user = Some("postgres".to_string());
+    cfg.host = Some("crawler-db".to_string());
+    cfg.port = Some(5432);
     cfg.dbname = Some("postgres".to_string());
+    cfg.user = Some("postgres".to_string());
+    cfg.password = Some("postgres".to_string());
     cfg.manager = Some(ManagerConfig { recycling_method: RecyclingMethod::Fast });
     let pool = cfg.create_pool(NoTls).unwrap();
-
-    db::init_db(&pool)
-        .await
-        .expect("database can be initialized");
 
     let routes = crawl_route(pool.clone())
         .or(count_route(pool.clone()))
@@ -31,10 +28,6 @@ async fn main() {
         .recover(error::handle_rejection);
 
     warp::serve(routes)
-        .run(([0, 0, 0, 0], 4030))
+        .run(([0, 0, 0, 0], 8080))
         .await;
 }
-
-
-
-

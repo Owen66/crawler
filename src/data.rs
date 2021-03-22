@@ -12,3 +12,12 @@ pub struct CrawlResult {
     pub domain_name: String,
     pub url: String,
 }
+#[derive(Deserialize, Serialize)]
+pub struct CountResponse {
+    pub count: i64,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ListResponse {
+    pub links: Vec<String>,
+}

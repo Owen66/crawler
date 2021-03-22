@@ -6,12 +6,10 @@ use deadpool_postgres::tokio_postgres;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    //#[error("error getting connection from DB pool: {0}")]
-    //DBPoolError(mobc::Error<tokio_postgres::Error>),
+    #[error("error parsing url input: {0}")]
+    UrlParseError(#[from] url::ParseError),
     #[error("error executing DB query: {0}")]
     DBQueryError(#[from] tokio_postgres::Error),
-    #[error("error creating table: {0}")]
-    DBInitError(tokio_postgres::Error),
     #[error("error reading file: {0}")]
     ReadFileError(#[from] std::io::Error),
 }
@@ -35,6 +33,10 @@ pub async fn handle_rejection(err: Rejection) -> std::result::Result<impl Reply,
         message = "Invalid Body";
     } else if let Some(e) = err.find::<Error>() {
         match e {
+            Error::UrlParseError(_) => {
+                code = StatusCode::BAD_REQUEST;
+                message = "Invalid url input";
+            }
             Error::DBQueryError(_) => {
                 code = StatusCode::BAD_REQUEST;
                 message = "Could not Execute request";

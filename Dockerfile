@@ -1,20 +1,16 @@
 FROM rust:1.49 as builder
-
-WORKDIR /usr/src
-
-RUN apt-get update && \
-    apt-get dist-upgrade -y && \
-    apt-get install -y musl-tools && \
-    rustup target add x86_64-unknown-linux-musl
-
-EXPOSE 3030
-
+WORKDIR /app
 RUN USER=root cargo new crawler
-WORKDIR /usr/src/crawler
+WORKDIR /app/crawler
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
-RUN cargo install --target x86_64-unknown-linux-musl --path .
+RUN cargo build --release
 
-FROM scratch
-COPY --from=builder /usr/local/cargo/bin/crawler .
+FROM debian:buster-slim
+RUN apt-get update \
+    && apt-get install -y ca-certificates tzdata \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /srv/crawler
+COPY --from=builder /app/crawler/target/release/crawler .
+EXPOSE 8080
 CMD ["./crawler"]

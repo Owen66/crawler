@@ -1,0 +1,19 @@
+version: "3.9"
+   
+services:
+  crawler-db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes: 
+      - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+  crawler:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - crawler-db
